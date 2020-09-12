@@ -14,6 +14,12 @@ abstract class AbstractLine
     const IMAGE_TYPE = 'image';
     const AUDIO_TYPE = 'audio';
 
+    const USER_FOLLOW = 'follow';
+    const USER_UNFOLLOW = 'unfoloow';
+    const LINE_MESSAGE = 'message';
+    const USER_JOIN = 'memberJoined';
+    const USER_LEAVE = 'memberLeft';
+
     protected $http_client;
     protected $bot;
 

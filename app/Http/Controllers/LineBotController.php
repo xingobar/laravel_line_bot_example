@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Bot\Line\LineBot;
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Jieba;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -12,6 +14,8 @@ class LineBotController extends Controller
 
     public function __construct(LineBot $lineBot)
     {
+//        Jieba::init();
+//        Finalseg::init();
         $this->linebot = $lineBot;
     }
 
@@ -57,8 +61,17 @@ class LineBotController extends Controller
         if (count($request->events) <= 0) {
             return;
         }
+        $event = $request->events[0];
+        $type = $event['type'];
 
-        $response = $this->linebot->reply($request->events[0]);
+        $response = [];
+        if ($type === LineBot::USER_FOLLOW) {
+            // 要加 rich menu
+        } else if ($type === LineBot::USER_UNFOLLOW) {
+            // 要取消 rich menu
+        } else if ($type === LineBot::LINE_MESSAGE){
+            $response = $this->linebot->reply($request->events[0]);
+        }
         return \response()->json($response);
     }
 }

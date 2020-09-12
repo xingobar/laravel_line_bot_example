@@ -262,11 +262,8 @@ class LineBotService
 
     public function resolveUserText($message)
     {
-        Jieba::init();
-        Finalseg::init();
         $text = $message['text'];
-        $array = Jieba::cut($text);
-
+        $array = []; //Jieba::cut($text);
         switch ($message['type']) {
             case self::TEXT_TYPE:
                 //$content = new TextMessageBuilder($message['text']);
@@ -275,7 +272,7 @@ class LineBotService
                 } else if (count(array_intersect($array, ['產品', 'product'])) > 0) {
                     $content = $this->generateProductMessage();
                 } else {
-                    $content = new TextMessageBuilder($message['text']);
+                    $content = new TextMessageBuilder($text);
                 }
                 break;
             default:
