@@ -17,7 +17,7 @@ class LineRichMenu extends AbstractLine
     protected $width = 2500;
     protected $height = 1686;
     protected $menuName = 'menu_name';
-    protected $chatBarText = 'chat_bar_text';
+    protected $chatBarText = '選單一';
     protected $label = 'label';
     protected $uri = 'https://google.com';
     protected $action ;
@@ -75,11 +75,21 @@ class LineRichMenu extends AbstractLine
     public function createRichMenu()
     {
         $size = RichMenuBuilder\RichMenuSizeBuilder::getFull();
-        $bound = new RichMenuAreaBoundsBuilder(0,0, $this->width, $this->height);
+        $bound = new RichMenuAreaBoundsBuilder(0,0, 833, 2500);
         //$action = new UriTemplateActionBuilder($this->label, $this->uri);
-        $action = new MessageTemplateActionBuilder($this->label, 'hello text');
-        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $this->action);
-        $builder = new RichMenuBuilder($size, true, $this->menuName, $this->chatBarText, [$area]);
+        $action = new MessageTemplateActionBuilder($this->label, 'hello text 1');
+        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action);
+
+        $action1 = new MessageTemplateActionBuilder($this->label, 'hello text 2');
+        $bound = new RichMenuAreaBoundsBuilder(833,0, 833, 2500);
+        $area1 = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action1);
+
+        $action2 = new MessageTemplateActionBuilder($this->label, 'hello text 3');
+        $bound = new RichMenuAreaBoundsBuilder(1666,0, 833, 2500);
+        $area2 = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action2);
+
+
+        $builder = new RichMenuBuilder($size, true, $this->menuName, $this->chatBarText, [$area, $area1, $area2]);
         $response = $this->bot->createRichMenu($builder);
         return $this->getResponse($response);
     }
