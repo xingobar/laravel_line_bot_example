@@ -4,6 +4,8 @@
 namespace App\Service;
 
 
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Jieba;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\Constant\Flex\ComponentAlign;
 use LINE\LINEBot\Constant\Flex\ComponentBorderWidth;
@@ -260,10 +262,21 @@ class LineBotService
 
     public function resolveUserText($message)
     {
+        Jieba::init();
+        Finalseg::init();
+        $text = $message['text'];
+        $array = Jieba::cut($text);
+
         switch ($message['type']) {
             case self::TEXT_TYPE:
                 //$content = new TextMessageBuilder($message['text']);
-                $content = $this->generateMenuTemplate();
+                if (count(array_intersect($array, ['選單', '菜單', 'menu'])) > 0) {
+                    $content = $this->generateMenuTemplate();
+                } else if (count(array_intersect($array, ['產品', 'product'])) > 0) {
+                    $content = $this->generateProductMessage();
+                } else {
+                    $content = new TextMessageBuilder($message['text']);
+                }
                 break;
             default:
                 $content = $this->generateMenuTemplate();
