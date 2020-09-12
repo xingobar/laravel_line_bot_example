@@ -28,5 +28,12 @@ Route::group(['prefix' => '/line'], function() {
     Route::get('/image-message', 'LineBotController@imageMessage');
 
     // 訊息
-    Route::POST('/message', 'LineBotController@message');
+    Route::post('/message', 'LineBotController@message');
+
+    // rich menu
+    Route::get('/richmenu', 'LineBotController@createRichMenu');
+    Route::get('/richmenu_list', 'LineBotController@getRichMenuList');
+    Route::get('/upload', 'LineBotController@uploadImage');
+    Route::get('/cancel', 'LineBotController@cancel');
+    Route::get('/default', 'LineBotController@setDefault');
 });

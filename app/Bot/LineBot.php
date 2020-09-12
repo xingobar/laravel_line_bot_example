@@ -5,6 +5,7 @@ namespace App\Bot;
 
 
 use App\Service\LineBotService;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
@@ -12,6 +13,8 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselColumnTemplateBuild
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\RichMenuBuilder;
+use LINE\LINEBot\RichMenuBuilder\RichMenuAreaBoundsBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineBot
@@ -71,5 +74,47 @@ class LineBot
 
         $response = $this->bot->replyMessage($token, $content);
         return $response->getHTTPStatus();
+    }
+
+    public function createRichMenu()
+    {
+        $size = RichMenuBuilder\RichMenuSizeBuilder::getFull();
+        $bound = new RichMenuAreaBoundsBuilder(0,0, 2500, 1686);
+        $action = new UriTemplateActionBuilder("test", "https://google.com");
+        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action);
+        $builder = new RichMenuBuilder($size, true, 'menu', 'bar_text', [$area]);
+        $response = $this->bot->createRichMenu($builder);
+        Log::debug('====== response ======');
+        Log::debug($response->getHTTPStatus());
+        Log::debug($response->getRawBody());
+        Log::debug($builder->build());
+        return $response;
+    }
+
+    public function getRichList()
+    {
+        return $this->bot->getRichMenuList();
+    }
+
+    public function uploadImageForMenu($menu_id)
+    {
+        $imagePath = storage_path('test.jpg');//'https://i.imgur.com/BlBH2HE.jpg';
+        $contentType = 'image/jpeg';
+        $response = $this->bot->uploadRichMenuImage($menu_id, $imagePath, $contentType);
+        Log::debug($response->getRawBody());
+        return $response->getHTTPStatus();
+    }
+
+    public function cancelRichMenu()
+    {
+        $respnose = $this->bot->cancelDefaultRichMenuId();
+        return $respnose->getHTTPStatus();
+    }
+
+    public function setDefault()
+    {
+        $response = $this->bot->setDefaultRichMenuId('richmenu-');
+        Log::debug($response->getRawBody());
+        Log::debug($response->getHTTPStatus());
     }
 }
