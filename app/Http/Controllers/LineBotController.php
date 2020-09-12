@@ -16,6 +16,11 @@ class LineBotController extends Controller
         $this->linebot = $lineBot;
     }
 
+    /**
+     * 單純信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function send(Request $request)
     {
         $message = $request->input("message", '請輸入訊息');
@@ -23,12 +28,22 @@ class LineBotController extends Controller
         return \response()->json($response);
     }
 
+    /**
+     * 圖片輪播
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function image(Request $request)
     {
         $response = $this->linebot->image();
         return \response()->json($response);
     }
 
+    /**
+     * 純圖片訊息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function imageMessage(Request $request)
     {
         $response = $this->linebot->imageMessage();

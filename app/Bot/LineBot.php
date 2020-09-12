@@ -4,6 +4,7 @@
 namespace App\Bot;
 
 
+use App\Service\LineBotService;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
@@ -22,21 +23,20 @@ class LineBot
 
     protected $http_client;
     protected $bot;
+    protected $lineBotService;
 
-    public function __construct()
+    public function __construct(LineBotService $lineBotService)
     {
         $this->http_client = new CurlHTTPClient(env('LINEBOT_TOKEN'));
         $this->bot  = new \LINE\LINEBot($this->http_client,  [
            'channelSecret' => env('LINEBOT_SECRET')
         ]);
+        $this->lineBotService = $lineBotService;
     }
 
     public function chat($message)
     {
-        if (is_string($message)) {
-            // 純文字訊息
-            $message = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
-        }
+        $message = $this->lineBotService->fetchMessageBuilder($message);
         $response = $this->bot->pushMessage(env('LINE_USER_ID'), $message);
         Log::debug($response->getRawBody());
         return $response->getHTTPStatus();
@@ -45,23 +45,13 @@ class LineBot
     // 傳送圖片有連結
     public function image()
     {
-        $target = $this->buildTemplateMessageBuilder(
-            'https://i.imgur.com/BlBH2HE.jpg',
-            'https://google.com',
-            'test');
-        return $this->chat($target);
-    }
-
-    // 建立 image 輪播
-    public function buildTemplateMessageBuilder(
-        string $imagePath,
-        string $directUri,
-        string $label
-    ): TemplateMessageBuilder {
-        $aa = new UriTemplateActionBuilder($label, $directUri);
-        $bb =  new ImageCarouselColumnTemplateBuilder($imagePath, $aa);
-        $target = new ImageCarouselTemplateBuilder([$bb]);
-        return new TemplateMessageBuilder('test123', $target);
+        $builder = $this->lineBotService
+                        ->buildImageCarouselBuilder(
+                            'test',
+                            'https://google.com',
+                            'https://i.imgur.com/BlBH2HE.jpg',
+                            'text');
+        return $this->chat($builder);
     }
 
     /**
@@ -70,23 +60,15 @@ class LineBot
      */
     public function imageMessage()
     {
-        $image = new ImageMessageBuilder('https://i.imgur.com/BlBH2HE.jpg', 'https://i.imgur.com/BlBH2HE.jpg');
+        $image = $this->lineBotService->buildImageBuilder('https://i.imgur.com/BlBH2HE.jpg', 'https://i.imgur.com/BlBH2HE.jpg');
         return $this->chat($image);
     }
 
     public function reply($event)
     {
         $token = $event['replyToken'];
-        $message = $event['message'];
+        $content = $this->lineBotService->resolveUserText($event['message']);
 
-        switch ($message['type']) {
-            case self::TEXT_TYPE:
-                $content = new TextMessageBuilder($message['text']);
-                break;
-            default:
-                $content = new TextMessageBuilder('請輸入訊息');
-                break;
-        }
         $response = $this->bot->replyMessage($token, $content);
         return $response->getHTTPStatus();
     }
