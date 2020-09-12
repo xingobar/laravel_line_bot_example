@@ -21,6 +21,9 @@ Route::group(['prefix' => '/line'], function() {
     // 文字訊息
    Route::get('/chat', 'LineBotController@send');
 
-   // 圖片訊息
+   // 圖片訊息 (有連結）
     Route::get('/image', 'LineBotController@image');
+
+    // 純圖片訊息
+    Route::get('/image-message', 'LineBotController@imageMessage');
 });
