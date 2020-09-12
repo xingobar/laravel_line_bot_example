@@ -4,9 +4,13 @@
 namespace App\Service;
 
 
+use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\Constant\Flex\ComponentAlign;
 use LINE\LINEBot\Constant\Flex\ComponentBorderWidth;
 use LINE\LINEBot\Constant\Flex\ComponentFontSize;
+use LINE\LINEBot\Constant\Flex\ComponentFontWeight;
+use LINE\LINEBot\Constant\Flex\ComponentImageAspectMode;
+use LINE\LINEBot\Constant\Flex\ComponentImageSize;
 use LINE\LINEBot\Constant\Flex\ComponentLayout;
 use LINE\LINEBot\Constant\Flex\ComponentMargin;
 use LINE\LINEBot\Constant\Flex\ComponentPosition;
@@ -14,8 +18,12 @@ use LINE\LINEBot\Constant\Flex\ComponentSpaceSize;
 use LINE\LINEBot\Constant\Flex\ComponentSpacing;
 use LINE\LINEBot\Constant\Flex\ContainerDirection;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\ButtonComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\IconComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\ImageComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\SpacerComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\TextComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
@@ -134,6 +142,119 @@ class LineBotService
 
         $container = new BubbleContainerBuilder($direction = ContainerDirection::LTR ,$bodyComponentBuilder = $componentBuilder);
         $content = new FlexMessageBuilder('test', $container);
+        return $content;
+    }
+
+    public function generateContents()
+    {
+        $builders = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $build = (new IconComponentBuilder('https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png'))
+                ->setSize(ComponentImageSize::SM);
+
+            $builders[] = $build;
+        }
+        $builders[] =  (new TextComponentBuilder("4.0"))
+            ->setSize(ComponentFontSize::SM)
+            ->setColor("#999999");
+        return $builders;
+    }
+
+    /**
+     * create product message
+     * @return FlexMessageBuilder
+     */
+    public function generateProductMessage()
+    {
+        $image_builder = ImageComponentBuilder::builder()
+            ->setUrl('https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png')
+            ->setSize(ComponentImageSize::FULL)->setAspectMode(ComponentImageAspectMode::COVER)
+            ->setAction(new UriTemplateActionBuilder(null, 'http://linecorp.com/'));
+
+        $body = BoxComponentBuilder::builder()
+            ->setLayout(ComponentLayout::VERTICAL)
+            ->setContents([
+                (new TextComponentBuilder("Brown Cafe"))
+                ->setWeight(ComponentFontWeight::BOLD),
+
+                BoxComponentBuilder::builder()
+                ->setLayout(ComponentLayout::BASELINE)
+                ->setContents([
+                    (new IconComponentBuilder('https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png'))
+                    ->setSize(ComponentImageSize::SM),
+
+                    (new IconComponentBuilder('https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png'))
+                        ->setSize(ComponentImageSize::SM),
+
+                    (new IconComponentBuilder('https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png'))
+                        ->setSize(ComponentImageSize::SM),
+
+                    (new IconComponentBuilder('https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png'))
+                        ->setSize(ComponentImageSize::SM),
+
+                    (new TextComponentBuilder("4.0"))
+                    ->setSize(ComponentFontSize::SM)
+                    ->setColor("#999999")
+                ]),
+
+                BoxComponentBuilder::builder()
+                ->setLayout(ComponentLayout::VERTICAL)
+                ->setContents([
+                    BoxComponentBuilder::builder()
+                    ->setLayout(ComponentLayout::BASELINE)
+                    ->setContents([
+                        (new TextComponentBuilder("Place"))
+                        ->setColor("#aaaaaa")
+                        ->setSize(ComponentFontSize::SM)
+                        ->setFlex(1),
+
+                        (new TextComponentBuilder("Miraina Tower, 4-1-6 Shinjuku, Tokyo"))
+                        ->setColor('#aaaaaa')
+                        ->setSize(ComponentFontSize::SM)
+                        ->setFlex(5),
+                    ])
+                    ->setSpacing(ComponentSpacing::SM),
+
+                    BoxComponentBuilder::builder()
+                    ->setLayout(ComponentLayout::BASELINE)
+                    ->setContents([
+                        (new TextComponentBuilder("Time"))
+                        ->setFlex(1)
+                        ->setColor("#aaaaaa")
+                        ->setSize(ComponentFontSize::SM),
+
+                        (new TextComponentBuilder("10:00 - 12:00"))
+                        ->setFlex(5)
+                        ->setColor("#aaaaaa")
+                        ->setSize(ComponentFontSize::SM),
+                    ])
+                    ->setSpacing(ComponentSpacing::SM)
+                ])
+            ])
+            ->setPaddingAll(ComponentSpacing::XXL);
+
+
+        $footer = BoxComponentBuilder::builder()
+                ->setLayout(ComponentLayout::VERTICAL)
+                ->setContents([
+                    ButtonComponentBuilder::builder()
+                    ->setFlex(6)
+                    ->setAction(new UriTemplateActionBuilder("CALL", "https://linecorp.com")),
+
+                    ButtonComponentBuilder::builder()
+                    ->setFlex(6)
+                    ->setAction(new UriTemplateActionBuilder("WEBSITE", 'https://linecorp.com')),
+
+                    SpacerComponentBuilder::builder()->setSize(ComponentSpacing::SM),
+                ]);
+
+        $container = BubbleContainerBuilder::builder()
+                    ->setDirection(ContainerDirection::LTR)
+                    ->setHero($image_builder)
+                    ->setBody($body)
+                    ->setFooter($footer);
+        $content = new FlexMessageBuilder('test', $container);
+
         return $content;
     }
 
