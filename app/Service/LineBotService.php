@@ -5,11 +5,15 @@ namespace App\Service;
 
 
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
+use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineBotService
@@ -59,16 +63,44 @@ class LineBotService
         return new ImageMessageBuilder($image_url, $preview_url);
     }
 
+    /**
+     * 產生 template messages
+     * @reference: https://developers.line.biz/zh-hant/reference/messaging-api/#template-messages
+     * @return MultiMessageBuilder
+     */
+    public function generateMenuTemplate()
+    {
+        $builders = new MultiMessageBuilder();
+        $action = new MessageTemplateActionBuilder("label", "text");
+        $action1 = new MessageTemplateActionBuilder("label1", "text1");
+        $action2 = new MessageTemplateActionBuilder('label2', 'text2');
+
+        $column = new CarouselColumnTemplateBuilder('column_title', 'column', null, [
+            $action,
+            $action1,
+            $action2
+        ]);
+
+        $builder = new TemplateMessageBuilder('請選擇以下選單',
+            new CarouselTemplateBuilder([$column]));
+
+        $builders->add($builder);
+        return $builders;
+    }
+
     public function resolveUserText($message)
     {
+
         switch ($message['type']) {
             case self::TEXT_TYPE:
-                $content = new TextMessageBuilder($message['text']);
+                //$content = new TextMessageBuilder($message['text']);
+                $content = $this->generateMenuTemplate();
                 break;
             default:
-                $content = new TextMessageBuilder('請輸入訊息');
+                $content = $this->generateMenuTemplate();
                 break;
         }
+
         return $content;
     }
 }

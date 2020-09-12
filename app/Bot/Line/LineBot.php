@@ -5,6 +5,7 @@ namespace App\Bot\Line;
 
 
 use App\Service\LineBotService;
+use Illuminate\Support\Facades\Log;
 
 class LineBot extends AbstractLine
 {
