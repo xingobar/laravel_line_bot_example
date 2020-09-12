@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Bot\LineBot;
+use App\Bot\Line\LineBot;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class LineBotController extends Controller
@@ -61,34 +60,5 @@ class LineBotController extends Controller
 
         $response = $this->linebot->reply($request->events[0]);
         return \response()->json($response);
-    }
-
-    public function createRichMenu(Request $request)
-    {
-        $respnose = $this->linebot->createRichMenu();
-        return \response()->json($respnose);
-    }
-
-    public function getRichMenuList(Request $request)
-    {
-        $response = $this->linebot->getRichList();
-        return \response()->json(json_decode($response->getRawBody(), true));
-    }
-
-    public function uploadImage(Request $request)
-    {
-        $response = $this->linebot->uploadImageForMenu('richmenu-');
-        return \response()->json($response);
-    }
-
-    public function cancel()
-    {
-        $response = $this->linebot->cancelRichMenu();
-        return \response()->json($response);
-    }
-
-    public function setDefault()
-    {
-        $this->linebot->setDefault();
     }
 }
