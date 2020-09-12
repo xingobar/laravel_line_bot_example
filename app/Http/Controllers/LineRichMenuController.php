@@ -68,4 +68,16 @@ class LineRichMenuController extends Controller
         $response = $this->lineRichMenu->setDefault($menu_id);
         return \response()->json($response);
     }
+
+    /**
+     * 刪除 menu
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete(Request $request)
+    {
+        $menu_id = $request->input('menu_id', '');
+        $response = $this->lineRichMenu->delete($menu_id);
+        return \response()->json($response);
+    }
 }

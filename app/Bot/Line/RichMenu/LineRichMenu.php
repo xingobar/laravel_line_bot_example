@@ -121,4 +121,15 @@ class LineRichMenu extends AbstractLine
         $response = $this->bot->setDefaultRichMenuId($menu_id);
         return $this->getResponse($response);
     }
+
+    /**
+     * 刪除 menu
+     * @param $menu_id - menu 編號
+     * @return mixed
+     */
+    public function delete($menu_id)
+    {
+        $response = $this->bot->deleteRichMenu($menu_id);
+        return $this->getResponse($response);
+    }
 }

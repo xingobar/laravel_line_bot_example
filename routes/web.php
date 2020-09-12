@@ -37,5 +37,6 @@ Route::group(['prefix' => '/line'], function() {
         Route::post('/upload', 'LineRichMenuController@uploadImage');
         Route::post('/cancel', 'LineRichMenuController@cancelDefault');
         Route::put('/default', 'LineRichMenuController@setDefault');
+        Route::delete('/', 'LineRichMenuController@delete');
     });
 });
