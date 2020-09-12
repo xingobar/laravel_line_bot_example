@@ -39,14 +39,15 @@ class LineBot
     // 傳送圖片有連結
     public function image()
     {
-        $target = $this->buildTemplateMessageBuilderDeprecated(
+        $target = $this->buildTemplateMessageBuilder(
             'https://i.imgur.com/BlBH2HE.jpg',
             'https://google.com',
             'test');
         return $this->chat($target);
     }
 
-    public function buildTemplateMessageBuilderDeprecated(
+    // 建立 image 輪播
+    public function buildTemplateMessageBuilder(
         string $imagePath,
         string $directUri,
         string $label
@@ -57,6 +58,10 @@ class LineBot
         return new TemplateMessageBuilder('test123', $target);
     }
 
+    /**
+     * 純圖片訊息
+     * @return int
+     */
     public function imageMessage()
     {
         $image = new ImageMessageBuilder('https://i.imgur.com/BlBH2HE.jpg', 'https://i.imgur.com/BlBH2HE.jpg');
