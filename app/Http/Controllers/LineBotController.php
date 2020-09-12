@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Bot\LineBot;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class LineBotController extends Controller
 {
@@ -30,6 +32,14 @@ class LineBotController extends Controller
     public function imageMessage(Request $request)
     {
         $response = $this->linebot->imageMessage();
+        return \response()->json($response);
+    }
+
+    public function message(Request $request)
+    {
+        Log::debug($request->events);
+        Log::debug($request->events[0]['replyToken']);
+        $response = $this->linebot->reply($request->events[0]['replyToken']);
         return \response()->json($response);
     }
 }

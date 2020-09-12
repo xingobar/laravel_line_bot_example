@@ -10,6 +10,7 @@ use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
+use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineBot
@@ -66,5 +67,11 @@ class LineBot
     {
         $image = new ImageMessageBuilder('https://i.imgur.com/BlBH2HE.jpg', 'https://i.imgur.com/BlBH2HE.jpg');
         return $this->chat($image);
+    }
+
+    public function reply($token)
+    {
+        $response = $this->bot->replyMessage($token, new TextMessageBuilder('test'));
+        return $response->getHTTPStatus();
     }
 }

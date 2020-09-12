@@ -26,4 +26,7 @@ Route::group(['prefix' => '/line'], function() {
 
     // 純圖片訊息
     Route::get('/image-message', 'LineBotController@imageMessage');
+
+    // 訊息
+    Route::POST('/message', 'LineBotController@message');
 });
