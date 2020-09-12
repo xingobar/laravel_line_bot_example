@@ -17,10 +17,15 @@ class LineRichMenuController extends Controller
 
     /**
      * 新增 menu
-     * @return false|mixed|string
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function create(Request $request)
     {
+        $type = $request->input('type', LineRichMenu::ACTION_URI);
+        $label = $request->input('label', 'test');
+        $text = $request->input('text', 'https://google.com');
+        $this->lineRichMenu->buildActionBuilder($type, $label, $text);
         $response = $this->lineRichMenu->createRichMenu();
         return \response()->json($response);
     }

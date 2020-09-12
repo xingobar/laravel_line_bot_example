@@ -8,6 +8,7 @@ use App\Bot\Line\AbstractLine;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\RichMenuBuilder;
 use LINE\LINEBot\RichMenuBuilder\RichMenuAreaBoundsBuilder;
+use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineRichMenu extends AbstractLine
@@ -19,6 +20,10 @@ class LineRichMenu extends AbstractLine
     protected $chatBarText = 'chat_bar_text';
     protected $label = 'label';
     protected $uri = 'https://google.com';
+    protected $action ;
+
+    const ACTION_URI = 'URI';
+    const ACTION_MESSAGE = 'MESSAGE';
 
     public function __construct()
     {
@@ -71,11 +76,35 @@ class LineRichMenu extends AbstractLine
     {
         $size = RichMenuBuilder\RichMenuSizeBuilder::getFull();
         $bound = new RichMenuAreaBoundsBuilder(0,0, $this->width, $this->height);
-        $action = new UriTemplateActionBuilder($this->label, $this->uri);
-        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action);
+        //$action = new UriTemplateActionBuilder($this->label, $this->uri);
+        $action = new MessageTemplateActionBuilder($this->label, 'hello text');
+        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $this->action);
         $builder = new RichMenuBuilder($size, true, $this->menuName, $this->chatBarText, [$area]);
         $response = $this->bot->createRichMenu($builder);
         return $this->getResponse($response);
+    }
+
+    /**
+     * 建立 action builder
+     * @param string $type
+     * @param string $label
+     * @param string $text
+     * @return MessageTemplateActionBuilder|UriTemplateActionBuilder
+     */
+    public function buildActionBuilder(string $type, string $label, string $text)
+    {
+        switch ($type) {
+            case self::ACTION_URI:
+                $action = new UriTemplateActionBuilder($label, $text);
+                break;
+            case self::ACTION_MESSAGE:
+                $action = new MessageTemplateActionBuilder($label, $text);
+                break;
+            default:
+                $action = new UriTemplateActionBuilder($label, $text);
+                break;
+        }
+        return $action;
     }
 
     /**
