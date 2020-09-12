@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Bot\Line\LineBot;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Jieba;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,7 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\ImageCarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineBotService
@@ -95,11 +97,10 @@ class LineBotService
     public function generateMenuTemplate()
     {
         $builders = new MultiMessageBuilder();
-        $action = new MessageTemplateActionBuilder("產品", "產品");
-        $action1 = new MessageTemplateActionBuilder("熱門", "熱門");
-        $action2 = new MessageTemplateActionBuilder('最新', '最新');
-
-        $column = new CarouselColumnTemplateBuilder('column_title', 'column', null, [
+        $action1 = new PostbackTemplateActionBuilder("熱門", "type=Hot");
+        $action2 = new PostbackTemplateActionBuilder('最新', 'type=New');
+        $action = new PostbackTemplateActionBuilder("產品", "type=Product");
+        $column = new CarouselColumnTemplateBuilder('你好~~', '請選擇以下選項', null, [
             $action,
             $action1,
             $action2
@@ -260,25 +261,21 @@ class LineBotService
         return $content;
     }
 
-    public function resolveUserText($message)
+    public function resolveUserText($event)
     {
-        $text = $message['text'];
-        $array = []; //Jieba::cut($text);
-        switch ($message['type']) {
-            case self::TEXT_TYPE:
-                //$content = new TextMessageBuilder($message['text']);
-                if (count(array_intersect($array, ['選單', '菜單', 'menu'])) > 0) {
+        if ($event['type'] === LineBot::POST_BACK) {
+            parse_str($event['postback']['data'], $output);
+            return $this->generateProductMessage();
+        } else {
+            $message = $event['message'];
+            switch ($message['type']) {
+                case self::TEXT_TYPE:
                     $content = $this->generateMenuTemplate();
-                } else if (count(array_intersect($array, ['產品', 'product'])) > 0) {
-                    $content = $this->generateProductMessage();
-                } else {
-                    //$content = new TextMessageBuilder($text);
+                    break;
+                default:
                     $content = $this->generateMenuTemplate();
-                }
-                break;
-            default:
-                $content = $this->generateMenuTemplate();
-                break;
+                    break;
+            }
         }
 
         return $content;

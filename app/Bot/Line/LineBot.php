@@ -56,7 +56,7 @@ class LineBot extends AbstractLine
     public function reply($event)
     {
         $token = $event['replyToken'];
-        $content = $this->lineBotService->resolveUserText($event['message']);
+        $content = $this->lineBotService->resolveUserText($event);
         $response = $this->bot->replyMessage($token, $content);
         return $this->getResponse($response);
     }

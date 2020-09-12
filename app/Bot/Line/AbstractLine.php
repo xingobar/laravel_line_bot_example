@@ -19,6 +19,7 @@ abstract class AbstractLine
     const LINE_MESSAGE = 'message';
     const USER_JOIN = 'memberJoined';
     const USER_LEAVE = 'memberLeft';
+    const POST_BACK = 'postback';
 
     protected $http_client;
     protected $bot;

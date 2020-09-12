@@ -69,8 +69,12 @@ class LineBotController extends Controller
             // 要加 rich menu
         } else if ($type === LineBot::USER_UNFOLLOW) {
             // 要取消 rich menu
-        } else if ($type === LineBot::LINE_MESSAGE){
+        } else if ($type === LineBot::LINE_MESSAGE or $type === LineBot::POST_BACK){
             $response = $this->linebot->reply($request->events[0]);
+        } else if ($type === LineBot::POST_BACK) {
+            parse_str($event['postback']['data'], $output);
+            Log::debug($event['postback']['data']);
+            Log::debug($output);
         }
         return \response()->json($response);
     }
