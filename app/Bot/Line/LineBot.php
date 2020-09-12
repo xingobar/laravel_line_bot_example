@@ -6,6 +6,7 @@ namespace App\Bot\Line;
 
 use App\Service\LineBotService;
 use Illuminate\Support\Facades\Log;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
 
 class LineBot extends AbstractLine
 {
