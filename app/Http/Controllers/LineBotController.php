@@ -20,4 +20,10 @@ class LineBotController extends Controller
         $response = $this->linebot->chat($message);
         return \response()->json($response);
     }
+
+    public function image(Request $request)
+    {
+        $response = $this->linebot->image();
+        return \response()->json($response);
+    }
 }

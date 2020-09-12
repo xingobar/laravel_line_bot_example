@@ -18,5 +18,9 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => '/line'], function() {
+    // 文字訊息
    Route::get('/chat', 'LineBotController@send');
+
+   // 圖片訊息
+    Route::get('/image', 'LineBotController@image');
 });
