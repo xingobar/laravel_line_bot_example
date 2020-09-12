@@ -91,6 +91,15 @@ class LineRichMenu extends AbstractLine
 
         $builder = new RichMenuBuilder($size, true, $this->menuName, $this->chatBarText, [$area, $area1, $area2]);
         $response = $this->bot->createRichMenu($builder);
+
+        // 直接建立單一 builder
+        $size = RichMenuBuilder\RichMenuSizeBuilder::getFull();
+        $bound = new RichMenuAreaBoundsBuilder(0,0, 833, 2500);
+        //$action = new UriTemplateActionBuilder($this->label, $this->uri);
+        $action = new MessageTemplateActionBuilder($this->label, 'hello text 1');
+        $area = new RichMenuBuilder\RichMenuAreaBuilder($bound, $action);
+
+
         return $this->getResponse($response);
     }
 
