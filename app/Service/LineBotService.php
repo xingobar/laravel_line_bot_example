@@ -95,9 +95,9 @@ class LineBotService
     public function generateMenuTemplate()
     {
         $builders = new MultiMessageBuilder();
-        $action = new MessageTemplateActionBuilder("label", "text");
-        $action1 = new MessageTemplateActionBuilder("label1", "text1");
-        $action2 = new MessageTemplateActionBuilder('label2', 'text2');
+        $action = new MessageTemplateActionBuilder("產品", "產品");
+        $action1 = new MessageTemplateActionBuilder("熱門", "熱門");
+        $action2 = new MessageTemplateActionBuilder('最新', '最新');
 
         $column = new CarouselColumnTemplateBuilder('column_title', 'column', null, [
             $action,
@@ -272,7 +272,8 @@ class LineBotService
                 } else if (count(array_intersect($array, ['產品', 'product'])) > 0) {
                     $content = $this->generateProductMessage();
                 } else {
-                    $content = new TextMessageBuilder($text);
+                    //$content = new TextMessageBuilder($text);
+                    $content = $this->generateMenuTemplate();
                 }
                 break;
             default:
