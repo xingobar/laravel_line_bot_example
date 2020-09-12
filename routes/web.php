@@ -16,3 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix' => '/line'], function() {
+   Route::get('/chat', 'LineBotController@send');
+});
