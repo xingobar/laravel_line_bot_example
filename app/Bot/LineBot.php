@@ -15,6 +15,11 @@ use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class LineBot
 {
+    const TEXT_TYPE = 'text';
+    const VIDEO_TYPE ='video';
+    const IMAGE_TYPE = 'image';
+    const AUDIO_TYPE = 'audio';
+
     protected $http_client;
     protected $bot;
 
@@ -69,9 +74,20 @@ class LineBot
         return $this->chat($image);
     }
 
-    public function reply($token)
+    public function reply($event)
     {
-        $response = $this->bot->replyMessage($token, new TextMessageBuilder('test'));
+        $token = $event['replyToken'];
+        $message = $event['message'];
+
+        switch ($message['type']) {
+            case self::TEXT_TYPE:
+                $content = new TextMessageBuilder($message['text']);
+                break;
+            default:
+                $content = new TextMessageBuilder('請輸入訊息');
+                break;
+        }
+        $response = $this->bot->replyMessage($token, $content);
         return $response->getHTTPStatus();
     }
 }

@@ -39,7 +39,12 @@ class LineBotController extends Controller
     {
         Log::debug($request->events);
         Log::debug($request->events[0]['replyToken']);
-        $response = $this->linebot->reply($request->events[0]['replyToken']);
+
+        if (count($request->events) <= 0) {
+            return;
+        }
+
+        $response = $this->linebot->reply($request->events[0]);
         return \response()->json($response);
     }
 }
